@@ -1,0 +1,39 @@
+{
+  "name": "@tscircuit/jscad",
+  "version": "0.0.1",
+  "module": "lib/index.ts",
+  "types": "lib/index.ts",
+  "exports": {
+    ".": "./lib/index.ts"
+  },
+  "files": [
+    "lib"
+  ],
+  "license": "MIT",
+  "description": "JSCAD-compatible modeling with named native construction references",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/tscircuit/jscad"
+  },
+  "type": "module",
+  "scripts": {
+    "test": "bun test",
+    "typecheck": "tsc --noEmit",
+    "format": "biome format --write .",
+    "format:check": "biome format ."
+  },
+  "dependencies": {
+    "@jscad/modeling": "2.13.0"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "2.2.4",
+    "@types/bun": "^1.3.0",
+    "typescript": "^5.9.3",
+    "poppygl": "^0.0.37",
+    "@tscircuit/alphabet": "^0.0.25",
+    "bun-match-svg": "^0.0.17"
+  },
+  "peerDependencies": {
+    "typescript": "^5"
+  }
+}
