@@ -1,0 +1,56 @@
+import { expect, test } from "bun:test"
+import upstream from "@jscad/modeling"
+import jscad from "../lib"
+import { cleanupSubtraction } from "../lib/cleanup-subtraction"
+import { snapshotSvg } from "./fixtures/snapshot"
+
+test("3D subtraction automatically cleans floating-point joins and retains native references", async () => {
+  const outer = jscad.extrusions.extrudeLinear(
+    { height: 60, topOutlineName: "outer" },
+    jscad.primitives.roundedRectangle({
+      size: [40, 20],
+      roundRadius: 4,
+      segments: 64,
+    }),
+  )
+  const inner = jscad.extrusions.extrudeLinear(
+    { height: 60, topOutlineName: "bore" },
+    jscad.primitives.roundedRectangle({
+      size: [36, 16],
+      roundRadius: 2,
+      segments: 64,
+    }),
+  )
+  const raw = upstream.booleans.subtract(
+    structuredClone(outer),
+    structuredClone(inner),
+  )
+  expect(() => upstream.geometries.geom3.validate(raw)).toThrow("non-manifold")
+  const material = { color: "steel" }
+  const base = {
+    ...raw,
+    material,
+    color: [0.5, 0.6, 0.7, 1] as [number, number, number, number],
+  }
+  const cleaned = cleanupSubtraction(upstream, base) as typeof base
+  const solid = jscad.booleans.subtract(outer, inner)
+  expect(() => upstream.geometries.geom3.validate(solid)).not.toThrow()
+  expect(cleaned.material).toBe(material)
+  expect(cleaned.color).toEqual(base.color)
+  expect(jscad.references.list(solid)).toEqual(["outer", "bore"])
+  expect(jscad.references.get(solid, "bore").matrix[14]).toBe(60)
+  expect(
+    upstream.measurements.measureVolume(solid) /
+      upstream.measurements.measureVolume(raw),
+  ).toBeCloseTo(1, 5)
+  const box = jscad.primitives.cuboid({ size: [2, 3, 4] })
+  expect(
+    jscad.geometries.geom3.toPolygons(jscad.booleans.subtract(box, box)),
+  ).toHaveLength(0)
+  const rectangle = jscad.primitives.rectangle({ size: [10, 10] })
+  const hole = jscad.primitives.circle({ radius: 2 })
+  expect(jscad.booleans.subtract(rectangle, hole)).toEqual(
+    upstream.booleans.subtract(rectangle, hole),
+  )
+  expect(await snapshotSvg(solid)).toMatchSvgSnapshot(import.meta.path)
+}, 30_000)

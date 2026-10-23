@@ -1,7 +1,7 @@
 # Repository guidance
 
 Preserve upstream JSCAD signatures and native geometry outputs. Delegate unnamed
-operations unchanged. References retain native geometry and full placement;
+operations unchanged except automatic cleanup of 3D subtraction results. References retain native geometry and full placement;
 they are authored construction references, not persistent B-rep identifiers.
 
 Keep the runtime browser-safe. Follow tscircuit/handbook bootstrapping guidance:
