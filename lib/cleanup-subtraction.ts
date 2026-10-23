@@ -1,3 +1,5 @@
+/// <reference path="./upstream-modifiers.d.ts" />
+import insertTjunctions from "@jscad/modeling/src/operations/modifiers/insertTjunctions.js"
 import type modeling from "@jscad/modeling"
 
 /** Normalize floating-point boolean joins before native triangulation. */
@@ -25,11 +27,25 @@ export function cleanupSubtraction(
       ]
     }),
   }))
-  const generalize = kernel.modifiers.generalize as unknown as (
-    options: { snap: boolean; triangulate: boolean },
-    shape: typeof geometry,
-  ) => typeof geometry
-  const cleaned = generalize({ snap: false, triangulate: true }, source)
+  // Reuse the pinned kernel's boundary insertion, but do not snap generated
+  // centroids: upstream generalize can move those points off the source plane.
+  const triangles = insertTjunctions(source.polygons).flatMap((polygon) => {
+    if (polygon.vertices.length === 3) return [polygon]
+    const center: [number, number, number] = [0, 0, 0]
+    for (const point of polygon.vertices)
+      for (let axis = 0; axis < 3; axis++)
+        center[axis]! += point[axis]! / polygon.vertices.length
+    return polygon.vertices.map((point, index) => {
+      const triangle = kernel.geometries.poly3.create([
+        center,
+        point,
+        polygon.vertices[(index + 1) % polygon.vertices.length]!,
+      ])
+      if (polygon.color) triangle.color = polygon.color
+      return triangle
+    })
+  })
+  const cleaned = geom3.create(triangles)
   geom3.validate(cleaned)
   // Keep symbol metadata and material/color properties from the native result.
   return {

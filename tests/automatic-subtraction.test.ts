@@ -43,6 +43,11 @@ test("3D subtraction automatically cleans floating-point joins and retains nativ
     upstream.measurements.measureVolume(solid) /
       upstream.measurements.measureVolume(raw),
   ).toBeCloseTo(1, 5)
+  const bounds = upstream.measurements.measureBoundingBox(solid)
+  const originalBounds = upstream.measurements.measureBoundingBox(raw)
+  for (let end = 0; end < 2; end++)
+    for (let axis = 0; axis < 3; axis++)
+      expect(bounds[end]![axis]).toBeCloseTo(originalBounds[end]![axis]!, 7)
   const box = jscad.primitives.cuboid({ size: [2, 3, 4] })
   expect(
     jscad.geometries.geom3.toPolygons(jscad.booleans.subtract(box, box)),
