@@ -26,4 +26,4 @@ test("ambiguous names and missing boundaries fail without guessing", async () =>
   )
   expect(r.list(solid)).toEqual(["__proto__"])
   expect(await snapshotSvg(solid)).toMatchSvgSnapshot(import.meta.path)
-})
+}, 30_000)

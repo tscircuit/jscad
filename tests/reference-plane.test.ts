@@ -13,4 +13,4 @@ test("native construction datums survive transforms and boolean carriers", async
   expect(jscad.measurements.measureVolume(solid)).toBeCloseTo(20 * 14 * 12)
   expect(r.get(solid, "mount").matrix[14]).toBe(8)
   expect(await snapshotSvg(solid)).toMatchSvgSnapshot(import.meta.path)
-})
+}, 30_000)

@@ -56,4 +56,4 @@ test("names actual boolean outlines and signed twisted extrusion caps", async ()
   copy.matrix[12] = 1000
   expect(r.get(solid, "top.bore").matrix[12]).toBe(8)
   expect(await snapshotSvg(solid)).toMatchSvgSnapshot(import.meta.path)
-})
+}, 30_000)

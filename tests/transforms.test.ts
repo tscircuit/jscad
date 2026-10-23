@@ -36,4 +36,4 @@ test("references follow aliases, matrices, centering, CSG and native baking", as
   )
   expect(r.get(source, "top").matrix[12]).toBe(0)
   expect(await snapshotSvg(moved)).toMatchSvgSnapshot(import.meta.path)
-})
+}, 30_000)

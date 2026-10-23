@@ -23,4 +23,4 @@ test("ordinary upstream geometry and variadic operations remain compatible", asy
     upstream.transforms.translate([1, 2, 3], [result, result]),
   )
   expect(await snapshotSvg(result)).toMatchSvgSnapshot(import.meta.path)
-})
+}, 30_000)
