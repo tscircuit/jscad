@@ -46,7 +46,6 @@ export function cleanupSubtraction(
     })
   })
   const cleaned = geom3.create(triangles)
-  geom3.validate(cleaned)
   // Keep symbol metadata and material/color properties from the native result.
   return {
     ...geometry,

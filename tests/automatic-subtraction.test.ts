@@ -52,6 +52,16 @@ test("3D subtraction automatically cleans floating-point joins and retains nativ
   expect(
     jscad.geometries.geom3.toPolygons(jscad.booleans.subtract(box, box)),
   ).toHaveLength(0)
+  // Native booleans also accept pre-existing open surfaces. Cleanup must not
+  // introduce mandatory manifold validation for those callers.
+  const open = upstream.geometries.geom3.create([
+    upstream.geometries.poly3.create([
+      [0, 0, 0],
+      [1, 0, 0],
+      [0, 1, 0],
+    ]),
+  ])
+  expect(() => cleanupSubtraction(upstream, open)).not.toThrow()
   const rectangle = jscad.primitives.rectangle({ size: [10, 10] })
   const hole = jscad.primitives.circle({ radius: 2 })
   expect(jscad.booleans.subtract(rectangle, hole)).toEqual(
