@@ -26,7 +26,9 @@ const rim = references.get(tube, "top.bore")
 
 All upstream namespaces are exported both individually and on the default object.
 `withReferences(existingKernel)` wraps an explicitly supplied compatible kernel
-without monkeypatching it. Ordinary calls delegate to upstream unchanged.
+without monkeypatching it. Ordinary calls delegate to upstream. Native 3D subtraction results automatically
+normalize floating-point joins and triangulate their boundaries. 2D subtraction
+and empty results keep upstream behavior.
 
 ## Naming references
 
@@ -73,3 +75,16 @@ Each test has one PoppyGL SVG snapshot containing a raster rendering and referen
 labels, with numerical assertions for geometry and placement. PoppyGL and its
 rendering dependencies are development-only. The package exports source, so use
 a TypeScript-aware bundler or Bun. No viewer, React or Node runtime is imported.
+
+## Indexed mesh export
+
+`geom3ToIndexedMesh(solid)` returns `{ positions, indices }` for renderers and
+mesh exporters. It handles coordinate welding and shared-edge subdivisions
+centrally, including T-junctions left by native boolean triangulation. The input
+solid and its reference metadata are not modified. Mesh export does not define,
+rename or serialize model references.
+
+Floating-point cleanup is also automatic for native 3D `booleans.subtract` in
+this compatibility kernel. Model components need no repair flag. Original color,
+material and construction-reference placement are retained. This cleanup cannot
+repair arbitrary invalid inputs; native validation errors still propagate.

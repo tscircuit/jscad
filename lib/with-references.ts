@@ -1,3 +1,4 @@
+import { cleanupSubtraction } from "./cleanup-subtraction"
 import modeling from "@jscad/modeling"
 import type {
   CompatibleJscad,
@@ -136,7 +137,15 @@ export function withReferences(
       if (typeof fn === "function") {
         wrapped[namespace][name] = (...args: any[]) => {
           const refs = merge(inputs(args))
-          return attach((fn as Function)(...args), refs)
+          let result = (fn as Function)(...args)
+          if (
+            namespace === "booleans" &&
+            name === "subtract" &&
+            k.geometries.geom3.isA(result)
+          ) {
+            result = cleanupSubtraction(kernel, result)
+          }
+          return attach(result, refs)
         }
       }
   }

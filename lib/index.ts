@@ -28,3 +28,5 @@ export type {
   OutlineNames,
   ReferenceApi,
 } from "./types"
+
+export { geom3ToIndexedMesh, type IndexedMesh } from "./geom3-to-indexed-mesh"
