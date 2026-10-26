@@ -1,6 +1,6 @@
 {
   "name": "@tscircuit/jscad",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "module": "lib/index.ts",
   "types": "lib/index.ts",
   "exports": {
