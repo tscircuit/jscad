@@ -1,5 +1,5 @@
 # Created using @tscircuit/plop (npm install -g @tscircuit/plop)
-name: Publish to npm
+name: Publish to npm and GitHub Packages
 on:
   push:
     branches:
@@ -8,7 +8,12 @@ on:
 permissions:
   contents: write
   id-token: write
+  packages: write
   pull-requests: write
+
+concurrency:
+  group: publish-packages
+  cancel-in-progress: false
 
 jobs:
   publish:
@@ -32,6 +37,18 @@ jobs:
       - run: bun run format:check
       - run: bun run typecheck
       - run: bun test
-      - run: pver release
+      - name: Publish release to npm
+        run: pver release
         env:
           GITHUB_TOKEN: ${{ secrets.TSCIRCUIT_BOT_GITHUB_TOKEN }}
+      - name: Configure GitHub Packages
+        uses: actions/setup-node@v6
+        with:
+          node-version: 24
+          package-manager-cache: false
+          registry-url: https://npm.pkg.github.com/
+          scope: "@tscircuit"
+      - name: Publish the same version to GitHub Packages
+        run: npm publish --registry=https://npm.pkg.github.com/ --access=public
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
