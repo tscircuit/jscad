@@ -3,3 +3,12 @@ declare module "@jscad/modeling/src/operations/modifiers/insertTjunctions.js" {
   const insertTjunctions: (polygons: Polygon[]) => Polygon[]
   export default insertTjunctions
 }
+
+declare module "@jscad/modeling/src/operations/extrusions/earcut/index.js" {
+  const earcut: (
+    data: number[],
+    holeIndices: number[] | null,
+    dimension?: number,
+  ) => number[]
+  export default earcut
+}
